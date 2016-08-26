@@ -1,3 +1,5 @@
+CFLAGS_KERNEL := -fno-strict-aliasing
+
 obj-y += irq.o arch_init.o arch_lock.o \
          reserve.o efuse.o common.o glb.o
 
