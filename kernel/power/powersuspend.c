@@ -14,6 +14,8 @@
  *
  *  v1.4 - add a hybrid-kernel mode, accepting both kernel hooks (first wins)
  *
+ *  v1.5 - fix hybrid-kernel mode cannot be set through sysfs
+ *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
  * may be copied, distributed, and modified under those terms.
@@ -35,7 +37,7 @@
 
 //#define POWER_SUSPEND_DEBUG // Add debugging prints in dmesg
 
-extern struct workqueue_struct *suspend_work_queue;
+struct workqueue_struct *suspend_work_queue;
 
 static DEFINE_MUTEX(power_suspend_lock);
 static LIST_HEAD(power_suspend_handlers);
@@ -136,8 +138,6 @@ abort_resume:
 	mutex_unlock(&power_suspend_lock);
 }
 
-static bool power_suspended = false;
-
 void set_power_suspend_state(int new_state)
 {
 	unsigned long irqflags;
@@ -148,15 +148,13 @@ void set_power_suspend_state(int new_state)
 		pr_info("[POWERSUSPEND] state activated.\n");
 		#endif
 		state = new_state;
-                power_suspended = true;
 		queue_work(suspend_work_queue, &power_suspend_work);
 	} else if (state == POWER_SUSPEND_ACTIVE && new_state == POWER_SUSPEND_INACTIVE) {
 		#ifdef POWER_SUSPEND_DEBUG
 		pr_info("[POWERSUSPEND] state deactivated.\n");
 		#endif
 		state = new_state;
-                power_suspended = false;	
-          	queue_work(suspend_work_queue, &power_resume_work);
+		queue_work(suspend_work_queue, &power_resume_work);
 	}
 	spin_unlock_irqrestore(&state_lock, irqflags);
 }
@@ -325,5 +323,4 @@ MODULE_AUTHOR("Paul Reioux <reioux@gmail.com> / Jean-Pierre Rasquin <yank555.lu@
 MODULE_DESCRIPTION("power_suspend - A replacement kernel PM driver for"
         "Android's deprecated early_suspend/late_resume PM driver!");
 MODULE_LICENSE("GPL v2");
-
 
