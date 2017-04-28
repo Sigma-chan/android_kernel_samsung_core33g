@@ -401,8 +401,9 @@
 #define __NR_sendmmsg		380
 #define __NR_process_vm_readv	381
 #define __NR_process_vm_writev	382
+#define __NR_seccomp		383
 
-#define __NR_syscall		383
+#define __NR_syscall		384
 #define NR_syscalls		__NR_syscall
 
 /* Old optional stuff no one actually uses */

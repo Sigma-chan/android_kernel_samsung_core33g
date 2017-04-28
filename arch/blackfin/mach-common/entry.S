@@ -1694,6 +1694,7 @@ ENTRY(_sys_call_table)
 	.long _sys_sendmmsg		/* 380 */
 	.long _sys_process_vm_readv
 	.long _sys_process_vm_writev
+	.long _sys_seccomp
 
 	.rept NR_syscalls-(.-_sys_call_table)/4
 	.long _sys_ni_syscall
