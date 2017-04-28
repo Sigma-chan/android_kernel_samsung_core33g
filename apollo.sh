@@ -149,6 +149,8 @@ echo -e "";
 	echo "     Kernel Apollo_X for Samsung Galaxy Core Prime SM-G360H";
 	echo -e "$BBlu";
 	echo -e "***************************************************************$nocol\n";
+while :
+	do
 	echo -e "$Whi===================${NONE} ${BGre}[!}${NONE} ${BBlu}Main Menu${NONE} ${BGre}[!]${NONE} $Whi===================${NONE}";
 	echo -e "$Whi"
 	echo "[1] Cleanup source";
@@ -162,8 +164,10 @@ echo -e "";
 	read -n 1 -p "Select your choice: " -s choice;
 	case ${choice} in
 		1) clean;;
-		2) build;;
-		3) build
+		2) clean
+		   build;;
+		3) clean
+		   build
 		   make_zip;;
 		4) make_zip;;
 		*) echo
@@ -171,6 +175,7 @@ echo -e "";
 		   sleep 2;
 		   exit 1;;
 	esac
+done
 }
 
 main $@
