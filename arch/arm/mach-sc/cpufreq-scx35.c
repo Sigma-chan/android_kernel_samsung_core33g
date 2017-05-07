@@ -54,7 +54,7 @@
 #define TRANSITION_LATENCY	(100 * 1000) /* ns */
 
 #define MAX_VOLT (1015 * 1000)
-#define MIN_VOLT (820  * 1000)
+#define MIN_VOLT (850  * 1000)
 
 static DEFINE_MUTEX(freq_lock);
 struct cpufreq_freqs global_freqs;
@@ -102,9 +102,9 @@ static struct cpufreq_table_data sc8830t_cpufreq_table_data_es = {
 		{UC4, 936800},
 		{UC5, 900000},
 		{UC6, 853200},
-		{UC7, 800000},
-		{UC8, SHARK_TDPLL_FREQUENCY},
-		{UC9, 700600},
+		{UC7, SHARK_TDPLL_FREQUENCY},
+		{UC8, 700600},
+		{UC9, SHARK_TDPLL_FREQUENCY/2},
 		{EC, CPUFREQ_TABLE_END},
 	},
 	.vddarm_mv = {
@@ -114,17 +114,17 @@ static struct cpufreq_table_data sc8830t_cpufreq_table_data_es = {
 		[OC2]  = 985000,
 		[OC1]  = 970000,
 #endif
-		[NOC]  = 955000,
-		[UC1]  = 940000,
-		[UC2]  = 925000,
-		[UC3]  = 910000,
+		[NOC]  = 1000000,
+		[UC1]  = 975000,
+		[UC2]  = 955000,
+		[UC3]  = 920000,
 		[UC4]  = 895000,
 		[UC5]  = 880000,
 		[UC6]  = 865000,
 		[UC7]  = 850000,
-		[UC8]  = 835000,
-		[UC9]  = 820000,
-		[EC]   = 820000,
+		[UC8]  = 850000,
+		[UC9]  = 850000,
+		[EC]   = 850000,
         },
 };
 
