@@ -30,56 +30,6 @@ else
     MALI_ENABLE_GPU_CONTROL_IN_PARAM = 1
 endif
 
-ifeq ($(CONFIG_MALI400_UMP),y)
-        EXTRA_DEFINES += -DCONFIG_MALI400_UMP=1
-        ifeq ($(USE_UMPV2),1)
-                UMP_SYMVERS_FILE ?= ../umpv2/Module.symvers
-        else
-                UMP_SYMVERS_FILE ?= ../ump/Module.symvers
-        endif
-        KBUILD_EXTRA_SYMBOLS = $(realpath $(UMP_SYMVERS_FILE))
-        $(warning $(KBUILD_EXTRA_SYMBOLS))
-endif
-
-ifeq ($(CONFIG_MALI400_PROFILING),y)
-ifeq ($(CONFIG_TRACEPOINTS),)
-        $(warning CONFIG_TRACEPOINTS required for profiling)
-else
-	    EXTRA_DEFINES += -DCONFIG_MALI400_PROFILING=1
-endif
-endif
-
-ifeq ($(CONFIG_MALI400_INTERNAL_PROFILING),y)
-EXTRA_DEFINES += -DCONFIG_MALI400_INTERNAL_PROFILING=1
-endif
-
-ifeq ($(CONFIG_MALI400_HEATMAPS_ENABLED),y)
-EXTRA_DEFINES += -DCONFIG_MALI400_HEATMAPS_ENABLED
-endif
-
-ifeq ($(CONFIG_MALI_DMA_BUF_MAP_ON_ATTACH),y)
-EXTRA_DEFINES += -DCONFIG_MALI_DMA_BUF_MAP_ON_ATTACH
-endif
-
-ifeq ($(CONFIG_MALI_SHARED_INTERRUPTS),y)
-EXTRA_DEFINES += -DCONFIG_MALI_SHARED_INTERRUPTS
-endif
-
-ifeq ($(CONFIG_MALI_PMU_PARALLEL_POWER_UP),y)
-EXTRA_DEFINES += -DCONFIG_MALI_PMU_PARALLEL_POWER_UP
-endif
-
-ifeq ($(CONFIG_MALI_PLATFORM_SC8830),y)
-		MALI_PLATFORM := sc8830
-		TARGET_PLATFORM := sc8830
-endif
-
-ifeq ($(CONFIG_ARCH_SCX30G),y)
-		ccflags-y += -DCONFIG_ARCH_SCX30G
-endif
-
-EXTRA_DEFINES += -DCONFIG_MALI400=1
-
 mali-y += \
 	linux/mali_osk_atomics.o \
 	linux/mali_osk_irq.o \
@@ -147,9 +97,8 @@ mali-y += \
 	linux/mali_pmu_power_up_down.o \
 	__malidrv_build_info.o
 
-ifneq ($(MALI_PLATFORM),)
-mali-y += platform/$(MALI_PLATFORM)/mali_platform.o
-ccflags-y += -I$(src)/platform/$(MALI_PLATFORM)
+ifneq ($(MALI_PLATFORM_FILES),)
+	mali-y += $(MALI_PLATFORM_FILES:.c=.o)
 endif
 
 mali-$(CONFIG_MALI400_PROFILING) += linux/mali_ukk_profiling.o
@@ -175,6 +124,9 @@ ccflags-y += $(EXTRA_DEFINES)
 ccflags-y += -DSPRD_MEM_OPT_PAGE_TABLE_SHRINK
 ccflags-y += -DSPRD_GPU_BOOST
 
+mali-y += platform/sc8830/mali_platform.o
+ccflags-y += -I$(src)/platform/sc8830
+
 ccflags-y += -DMALI_PP_SCHEDULER_FORCE_NO_JOB_OVERLAP=$(MALI_PP_SCHEDULER_FORCE_NO_JOB_OVERLAP)
 ccflags-y += -DMALI_PP_SCHEDULER_KEEP_SUB_JOB_STARTS_ALIGNED=$(MALI_PP_SCHEDULER_KEEP_SUB_JOB_STARTS_ALIGNED)
 ccflags-y += -DMALI_PP_SCHEDULER_FORCE_NO_JOB_OVERLAP_BETWEEN_APPS=$(MALI_PP_SCHEDULER_FORCE_NO_JOB_OVERLAP_BETWEEN_APPS)
@@ -195,7 +147,7 @@ ccflags-$(CONFIG_MALI400_UMP) += -I$(src)/../ump/include/ump
 ccflags-$(CONFIG_MALI400_DEBUG) += -DDEBUG
 
 # Use our defines when compiling
-ccflags-y += -I$(src) -I$(src)/include -I$(src)/common -I$(src)/linux -I$(src)/platform
+ccflags-y += -I$(src) -I$(src)/include -I$(src)/common -I$(src)/linux -I$(src)/platform -I$(src)/platform/$(MALI_PLATFORM)
 
 # Get subversion revision number, fall back to only ${MALI_RELEASE_NAME} if no svn info is available
 MALI_RELEASE_NAME=$(shell cat $(src)/.version 2> /dev/null)
