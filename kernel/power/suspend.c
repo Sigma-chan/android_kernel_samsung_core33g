@@ -92,15 +92,6 @@ void suspend_set_ops(const struct platform_suspend_ops *ops)
 }
 EXPORT_SYMBOL_GPL(suspend_set_ops);
 
-bool valid_state(suspend_state_t state)
-{
-	/*
-	 * All states need lowlevel support and need to be valid to the lowlevel
-	 * implementation, no valid callback implies that none are valid.
-	 */
-	return suspend_ops && suspend_ops->valid && suspend_ops->valid(state);
-}
-
 /**
  * suspend_valid_only_mem - Generic memory-only valid callback.
  *
